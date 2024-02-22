@@ -1,5 +1,7 @@
 package com.example.payment.payment.services;
 
+import com.example.payment.payment.customExeptions.AccountNotFoundException;
+import com.example.payment.payment.interfaces.AccountRepositoryInterface;
 import com.example.payment.payment.model.Account;
 import com.example.payment.payment.repository.AccountRepository;
 import org.springframework.stereotype.Service;
@@ -10,17 +12,21 @@ import java.util.List;
 
 @Service
 public class TransferService {
-    private final AccountRepository accountRepository;
+    private final AccountRepositoryInterface accountRepository;
 
-    public TransferService(AccountRepository accountRepository) {
+    public TransferService(AccountRepositoryInterface accountRepository) {
         this.accountRepository = accountRepository;
     }
 
     @Transactional
     public void transferMoney(long idSender, long idReceiver, BigDecimal amount) {
         //Аккаунты получатель/отправитель
-        Account sender = accountRepository.findAccountById(idSender);
-        Account receiver = accountRepository.findAccountById(idReceiver);
+//        Account sender = accountRepository.findAccountById(idSender);
+        Account sender = accountRepository.findById(idSender).orElseThrow(
+                AccountNotFoundException::new);
+//        Account receiver = accountRepository.findAccountById(idReceiver);
+        Account receiver = accountRepository.findById(idReceiver)
+                .orElseThrow(AccountNotFoundException::new);
 
         //Новые суммы на счетах
         BigDecimal newAmountSender = sender.getAmount().subtract(amount);
@@ -32,7 +38,11 @@ public class TransferService {
         //throw new RuntimeException("Oh no, something go wrong");
     }
 
-    public List<Account> getAllAccounts(){
-        return accountRepository.getAllAccounts();
+    public Iterable<Account> getAllAccounts(){
+        return accountRepository.findAll();
+    }
+
+    public List<Account> findAllAccountsByName(String name) {
+        return accountRepository.findAccountsByName(name);
     }
 }

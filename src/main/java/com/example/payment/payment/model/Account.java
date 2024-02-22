@@ -1,17 +1,20 @@
 package com.example.payment.payment.model;
 
+import org.springframework.data.annotation.Id;
+
 import java.math.BigDecimal;
 
 public class Account {
-    private int id;
+    @Id
+    private long id;
     private String name;
     private BigDecimal amount;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

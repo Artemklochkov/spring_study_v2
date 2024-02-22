@@ -3,10 +3,7 @@ package com.example.payment.payment.controller;
 import com.example.payment.payment.model.Account;
 import com.example.payment.payment.model.TransferRequest;
 import com.example.payment.payment.services.TransferService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -29,7 +26,14 @@ public class AccountController {
     }
 
     @GetMapping("/accounts")
-    public List<Account> getAllAccounts(){
-        return transferService.getAllAccounts();
+    public Iterable<Account> getAllAccounts(
+            @RequestParam(required = false) String name
+    ){
+        if (name!=null) {
+            return transferService.findAllAccountsByName(name);
+        }
+        else {
+            return transferService.getAllAccounts();
+        }
     }
 }
